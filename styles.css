@@ -1,0 +1,171 @@
+/* Reset mặc định */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  background-image: url('https://raw.githubusercontent.com/tongtrankien1605/picture/main/city-night.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  overflow-x: hidden;
+  color: #fff;
+}
+
+/* Hiệu ứng lấp lánh */
+body::before,
+body::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="rgba(255, 255, 255, 0.8)"/></svg>') repeat;
+  background-size: 25px 25px;
+  animation: sparkle 12s linear infinite;
+  opacity: 0.4;
+}
+
+body::after {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="1" cy="1" r="1" fill="rgba(255, 255, 255, 0.6)"/></svg>') repeat;
+  background-size: 15px 15px;
+  animation: sparkle 18s linear infinite reverse;
+  opacity: 0.3;
+}
+
+@keyframes sparkle {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(25px, 25px);
+    opacity: 0.3;
+  }
+}
+
+/* Đảm bảo nội dung dễ đọc */
+main, header, nav, form, footer, #response {
+  background: rgba(255, 255, 255, 0.9); /* Nền trắng mờ */
+  padding: 20px;
+  border-radius: 8px;
+  color: #333;
+  position: relative;
+  z-index: 1;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 2em;
+  color: #333;
+}
+
+header p {
+  color: #666;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+nav ul li {
+  flex: 1 1 200px;
+}
+
+nav ul li a {
+  display: block;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+nav ul li a:hover {
+  background: #0056b3;
+}
+
+form {
+  margin: 20px 0;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+form input[type="number"],
+form button {
+  padding: 8px;
+  margin: 5px 0;
+  width: 100%;
+  max-width: 200px;
+}
+
+form button {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #0056b3;
+}
+
+pre {
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  color: #333;
+}
+
+a.download-btn, button.download-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  margin: 5px;
+}
+
+a.download-btn:hover, button.download-btn:hover {
+  background: #218838;
+}
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+}

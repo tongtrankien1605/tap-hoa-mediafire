@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Email Tài Khoản Acc</title>
+    <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    input[type="number"] {
+      width: 100px;
+    }
+    button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .download-btn {
+      background-color: #28a745;
+      margin: 5px 0;
+      display: inline-block;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .download-btn:hover {
+      background-color: #218838;
+    }
+    #response {
+      margin-top: 20px;
+    }
+    pre {
+      background: #f8f8f8;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Create Email Tài Khoản Acc</h1>
+    <p>Nhập thông tin để tạo danh sách email và tải tệp văn bản.</p>
+    <a href="index.html">Quay lại Trang Chủ</a>
+  </header>
+  <main>
+    <form id="emailForm">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+      <label for="domain">Tên miền:</label>
+      <input type="text" id="domain" name="domain" placeholder="example.com" required>
+      <label for="startIndex">Chỉ số bắt đầu:</label>
+      <input type="number" id="startIndex" name="startIndex" min="0" required>
+      <label for="endIndex">Chỉ số kết thúc:</label>
+      <input type="number" id="endIndex" name="endIndex" min="0" required>
+      <button type="submit">Tạo</button>
+    </form>
+    <div id="response"></div>
+  </main>
+  <footer>
+    <p>© 2025 Tong Tran Kien. Được triển khai trên GitHub Pages.</p>
+  </footer>
+
+  <script>
+    // Hàm tạo mã code ngẫu nhiên (6 ký tự hexa)
+    function generateRandomCode() {
+      const array = new Uint8Array(3);
+      crypto.getRandomValues(array);
+      return Array.from(array, byte => ('0' + byte.toString(16)).slice(-2)).join('');
+    }
+
+    // Hàm tạo danh sách email
+    function generateEmailList(username, startIndex, endIndex, domain) {
+      const emails = [];
+      for (let i = startIndex; i <= endIndex; i++) {
+        const paddedIndex = i.toString().padStart(2, '0');
+        const email = `${username}${paddedIndex}@${domain}`;
+        emails.push(email);
+      }
+      return emails;
+    }
+
+    // Hàm kích hoạt tải xuống tệp văn bản
+    function triggerDownload(emails, randomCode) {
+      const textContent = emails.join('\n');
+      const blob = new Blob([textContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${randomCode}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Xử lý sự kiện gửi form
+    document.getElementById('emailForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Lấy giá trị từ form
+      const username = document.getElementById('username').value.trim();
+      const domain = document.getElementById('domain').value.trim();
+      const startIndex = parseInt(document.getElementById('startIndex').value);
+      const endIndex = parseInt(document.getElementById('endIndex').value);
+
+      // Kiểm tra dữ liệu đầu vào
+      if (username && domain && startIndex >= 0 && endIndex >= startIndex) {
+        const emails = generateEmailList(username, startIndex, endIndex, domain);
+        const randomCode = generateRandomCode();
+
+        // Hiển thị kết quả
+        document.getElementById('response').innerHTML = `
+          <h2>Kết quả xử lý</h2>
+          <p>Mã code: <strong>${randomCode}</strong></p>
+          <button class="download-btn" onclick="triggerDownload([${emails.map(e => `'${e}'`)}], '${randomCode}')">Tải tệp văn bản</button>
+          <h3>Danh sách email:</h3>
+          <pre>${emails.join('\n')}</pre>
+        `;
+      } else {
+        document.getElementById('response').innerHTML = 
+          '<p style="color: red; font-weight: bold;">Vui lòng nhập đầy đủ thông tin và khoảng chỉ số hợp lệ.</p>';
+      }
+    });
+  </script>
+</body>
+</html>

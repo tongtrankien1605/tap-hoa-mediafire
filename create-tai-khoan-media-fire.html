@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tạo Tài Khoản MediaFire Ngẫu Nhiên</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Tạo Tài Khoản MediaFire Ngẫu Nhiên</h1>
+    <p>Nhập số lượng để tạo danh sách tài khoản mediafire gồm email, mật khẩu, firstname, lastname</p>
+    <a href="index.html">Quay lại Trang Chủ</a>
+  </header>
+  <main>
+    <form id="randomDataForm">
+      <label for="quantity">Số lượng:</label>
+      <input type="number" id="quantity" name="quantity" min="1" max="1000" required>
+      <button type="submit">Tạo</button>
+    </form>
+    <div id="response"></div>
+  </main>
+  <footer>
+    <p>© 2025 Tong Tran Kien. Được triển khai trên GitHub Pages.</p>
+  </footer>
+
+  <!-- Thêm thư viện JSZip -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    // Logic tạo dữ liệu ngẫu nhiên
+    const firstNames = ["An", "Bao", "Cuong", "Dung", "Hanh", "Hung", "Linh", "Minh", "Ngoc", "Phuc", "Quan", "Son", "Thanh", "Thao", "Tu", "Vy"];
+    const lastNames = ["Nguyen", "Tran", "Le", "Pham", "Hoang", "Phan", "Vu", "Vo", "Dang", "Bui", "Do", "Ho", "Ngo", "Duong", "Ly"];
+
+    function generateRandomName() {
+      const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+      const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+      return [firstName, lastName];
+    }
+
+    function generateRandomEmail() {
+      const letters = 'abcdefghijklmnopqrstuvwxyz';
+      const numbers = '0123456789';
+      const randomLetters = Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * letters.length)]).join('');
+      const randomNumbers = Array.from({ length: 6 }, () => numbers[Math.floor(Math.random() * numbers.length)]).join('');
+      return `${randomLetters}${randomNumbers}@yopmail.com`;
+    }
+
+    function generateRandomPassword() {
+      const numbers = '0123456789';
+      const randomNumbers = Array.from({ length: 6 }, () => numbers[Math.floor(Math.random() * numbers.length)]).join('');
+      return `KienTT${randomNumbers}@`;
+    }
+
+    function generateRandomCode() {
+      const array = new Uint8Array(3);
+      crypto.getRandomValues(array);
+      return Array.from(array, byte => ('0' + byte.toString(16)).slice(-2)).join('');
+    }
+
+    document.getElementById('randomDataForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const quantity = parseInt(document.getElementById('quantity').value);
+      if (quantity <= 0 || quantity > 1000) {
+        document.getElementById('response').innerText = 'Số lượng phải từ 1 đến 1000.';
+        return;
+      }
+
+      const randomCode = generateRandomCode();
+      const results = [];
+      const emailFileContent = [];
+      const firstNameFileContent = [];
+      const lastNameFileContent = [];
+      const passwordFileContent = [];
+      const mediaFileContent = [];
+
+      for (let i = 0; i < quantity; i++) {
+        const [firstName, lastName] = generateRandomName();
+        const email = generateRandomEmail();
+        const password = generateRandomPassword();
+        const message = "Nhắn tin mã đơn hàng cho shop để nhận mật khẩu";
+
+        const line = `${email}|${password}|${message}|${firstName}|${lastName}`;
+        const mediaLine = `${email}|${message}|${firstName}|${lastName}`;
+        results.push(line);
+        emailFileContent.push(email);
+        firstNameFileContent.push(firstName);
+        lastNameFileContent.push(lastName);
+        passwordFileContent.push(password);
+        mediaFileContent.push(mediaLine);
+      }
+
+      const zip = new JSZip();
+      zip.file('emails.txt', emailFileContent.join('\n'));
+      zip.file('first_names.txt', firstNameFileContent.join('\n'));
+      zip.file('last_names.txt', lastNameFileContent.join('\n'));
+      zip.file('passwords.txt', passwordFileContent.join('\n'));
+      zip.file('all_results.txt', results.join('\n'));
+      zip.file('media.txt', mediaFileContent.join('\n'));
+
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const zipUrl = URL.createObjectURL(zipBlob);
+
+      document.getElementById('response').innerHTML = `
+        <h2>Kết quả xử lý</h2>
+        <p>Mã code: <strong>${randomCode}</strong></p>
+        <button class="download-btn" onclick="window.location.href='${zipUrl}'" download="${randomCode}_data.zip">Tải tệp ZIP</button>
+        <h3>Danh sách kết quả:</h3>
+        <pre>${results.join('\n')}</pre>
+      `;
+
+      const files = [
+        { name: 'emails.txt', content: emailFileContent.join('\n') },
+        { name: 'first_names.txt', content: firstNameFileContent.join('\n') },
+        { name: 'last_names.txt', content: lastNameFileContent.join('\n') },
+        { name: 'passwords.txt', content: passwordFileContent.join('\n') },
+        { name: 'all_results.txt', content: results.join('\n') },
+        { name: 'media.txt', content: mediaFileContent.join('\n') },
+      ];
+
+      files.forEach(file => {
+        const blob = new Blob([file.content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.name;
+        link.textContent = `Tải ${file.name}`;
+        link.className = 'download-btn';
+        document.getElementById('response').appendChild(link);
+        document.getElementById('response').appendChild(document.createElement('br'));
+      });
+    });
+  </script>
+</body>
+</html>
