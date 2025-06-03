@@ -9,13 +9,58 @@
     .back-btn .arrow {
       margin-right: 8px;
     }
-    pre.result-box {
+    #response {
+      position: relative;
+      margin-top: 20px;
+    }
+    .result-box {
+      position: relative;
       max-height: 185px;
       overflow-y: auto;
       border: 1px solid #ccc;
       padding: 5px;
       background-color: #f9f9f9;
       border-radius: 5px;
+    }
+    .copy-container {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      z-index: 10;
+    }
+    .copy-icon {
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 5px;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+    }
+    .copy-icon:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    /* CSS cho dashboard */
+    .dashboard {
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    .dashboard table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .dashboard th, .dashboard td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .dashboard th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    .dashboard tr:hover {
+      background-color: #f9f9f9;
     }
   </style>
 </head>
@@ -28,7 +73,7 @@
   <main>
     <form id="randomDataForm">
       <label for="quantity">Nhập số lượng tài khoản cần tạo:</label>
-      <input type="number" id="quantity" name="quantity" value="1" min="1"  required>
+      <input type="number" id="quantity" name="quantity" value="1" min="1" required>
       <button type="submit">Tạo</button>
     </form>
     <div id="response"></div>
@@ -40,18 +85,15 @@
   <!-- Thêm thư viện JSZip -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
-    // Danh sách tên và họ để tạo ngẫu nhiên
     const firstNames = ["An", "Bao", "Cuong", "Dung", "Hanh", "Hung", "Linh", "Minh", "Ngoc", "Phuc", "Quan", "Son", "Thanh", "Thao", "Tu", "Vy"];
     const lastNames = ["Nguyen", "Tran", "Le", "Pham", "Hoang", "Phan", "Vu", "Vo", "Dang", "Bui", "Do", "Ho", "Ngo", "Duong", "Ly"];
 
-    // Hàm tạo tên ngẫu nhiên
     function generateRandomName() {
       const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
       const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
       return [firstName, lastName];
     }
 
-    // Hàm tạo email ngẫu nhiên
     function generateRandomEmail() {
       const letters = 'abcdefghijklmnopqrstuvwxyz';
       const numbers = '0123456789';
@@ -60,21 +102,38 @@
       return `${randomLetters}${randomNumbers}@yopmail.com`;
     }
 
-    // Hàm tạo mật khẩu ngẫu nhiên
     function generateRandomPassword() {
       const numbers = '0123456789';
       const randomNumbers = Array.from({ length: 6 }, () => numbers[Math.floor(Math.random() * numbers.length)]).join('');
       return `KienTT${randomNumbers}@`;
     }
 
-    // Hàm tạo mã code ngẫu nhiên
     function generateRandomCode() {
       const array = new Uint8Array(3);
       crypto.getRandomValues(array);
       return Array.from(array, byte => ('0' + byte.toString(16)).slice(-2)).join('');
     }
 
-    // Xử lý sự kiện khi gửi biểu mẫu
+    function copyResults() {
+      const resultText = document.querySelector('.result-box').innerText.trim();
+      navigator.clipboard.writeText(resultText).then(() => {
+        const feedback = document.createElement('span');
+        feedback.textContent = 'Đã sao chép!';
+        feedback.style.color = 'green';
+        feedback.style.marginLeft = '10px';
+        document.querySelector('.copy-container').appendChild(feedback);
+        setTimeout(() => feedback.remove(), 2000);
+      }).catch(err => {
+        console.error('Lỗi khi sao chép: ', err);
+        const feedback = document.createElement('span');
+        feedback.textContent = 'Lỗi khi sao chép!';
+        feedback.style.color = 'red';
+        feedback.style.marginLeft = '10px';
+        document.querySelector('.copy-container').appendChild(feedback);
+        setTimeout(() => feedback.remove(), 2000);
+      });
+    }
+
     document.getElementById('randomDataForm').addEventListener('submit', async function(event) {
       event.preventDefault();
 
@@ -93,7 +152,6 @@
       const passwordFileContent = [];
       const mediaFileContent = [];
 
-      // Tạo dữ liệu ngẫu nhiên theo số lượng
       for (let i = 0; i < quantity; i++) {
         const [firstName, lastName] = generateRandomName();
         const email = generateRandomEmail();
@@ -110,7 +168,6 @@
         mediaFileContent.push(mediaLine);
       }
 
-      // Tạo tệp ZIP với tên mới
       const zip = new JSZip();
       zip.file(`email_${randomCode}.txt`, emailFileContent.join('\n'));
       zip.file(`firstname_${randomCode}.txt`, firstNameFileContent.join('\n'));
@@ -122,13 +179,27 @@
       const zipBlob = await zip.generateAsync({ type: 'blob' });
       const zipUrl = URL.createObjectURL(zipBlob);
 
-      // Hiển thị kết quả và liên kết tải
+      // Tạo HTML cho dashboard
+      let dashboardRows = '';
+      results.forEach(line => {
+        const [email, password, message, firstName, lastName] = line.split('|');
+        dashboardRows += `
+          <tr>
+            <td>${email}</td>
+            <td>${password}</td>
+            <td>${message}</td>
+            <td>${firstName}</td>
+            <td>${lastName}</td>
+          </tr>`;
+      });
+
       document.getElementById('response').innerHTML = `
         <h2>Kết quả xử lý</h2>
         <p>Mã code: <strong>${randomCode}</strong></p>
         <a class="download-btn" href="${zipUrl}" download="${randomCode}.zip">Tải ${randomCode}.zip</a>
         <h3>Danh sách kết quả:</h3>
-        <pre class="result-box">${results.join('\n')}</pre>
+        <pre class="result-box">${results.join('\n')}<div class="copy-container"><span class="copy-icon" onclick="copyResults()">📋</span></div></pre>
+        
       `;
     });
   </script>
