@@ -88,13 +88,13 @@
   <main>
     <form id="emailForm">
       <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required>
+      <input type="text" id="username" name="username" placeholder="Ví dụ: tongtrankien" required>
       <label for="domain">Tên miền:</label>
-      <input type="text" id="domain" name="domain" placeholder="example.com" required>
+      <input type="text" id="domain" name="domain" placeholder="Ví dụ: yopmail.com" required>
       <label for="startIndex">Chỉ số bắt đầu:</label>
-      <input type="number" id="startIndex" name="startIndex" min="0" required>
+      <input type="number" id="startIndex" name="startIndex" min="0" placeholder="Ví dụ: 1" required>
       <label for="endIndex">Chỉ số kết thúc:</label>
-      <input type="number" id="endIndex" name="endIndex" min="0" required>
+      <input type="number" id="endIndex" name="endIndex" min="0" placeholder="Ví dụ: 100" required>
       <button type="submit">Tạo</button>
     </form>
     <div id="response"></div>
@@ -155,7 +155,7 @@
         document.getElementById('response').innerHTML = `
           <h2>Kết quả xử lý</h2>
           <p>Mã code: <strong>${randomCode}</strong></p>
-          <button class="download-btn" onclick="triggerDownload([${emails.map(e => `'${e}'`)}], '${randomCode}')">Tải tệp văn bản</button>
+          <button class="download-btn" onclick="triggerDownload([${emails.map(e => `'${e}'`)}], '${randomCode}')">Tải ${randomCode}.txt</button>
           <h3>Danh sách email:</h3>
           <pre>${emails.join('\n')}</pre>
         `;
