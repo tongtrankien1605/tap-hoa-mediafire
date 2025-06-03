@@ -10,23 +10,12 @@
       margin-right: 8px;
     }
     pre.result-box {
-      max-height: 175px;
+      max-height: 225px;
       overflow-y: auto;
       border: 1px solid #ccc;
       padding: 10px;
       background-color: #f9f9f9;
       border-radius: 5px;
-    }
-    .download-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .download-buttons a {
-      flex: 1 1 calc(16.67% - 10px);
-      box-sizing: border-box;
-      text-align: center;
     }
   </style>
 </head>
@@ -140,34 +129,6 @@
         <h3>Danh sách kết quả:</h3>
         <pre class="result-box">${results.join('\n')}</pre>
       `;
-
-      // Tạo container cho các nút tải xuống
-      const downloadContainer = document.createElement('div');
-      downloadContainer.className = 'download-buttons';
-
-      // Tạo liên kết tải từng tệp và thêm vào container
-      const files = [
-        { name: `email_${randomCode}.txt`, content: emailFileContent.join('\n') },
-        { name: `firstname_${randomCode}.txt`, content: firstNameFileContent.join('\n') },
-        { name: `lastname_${randomCode}.txt`, content: lastNameFileContent.join('\n') },
-        { name: `password_${randomCode}.txt`, content: passwordFileContent.join('\n') },
-        { name: `allresults_${randomCode}.txt`, content: results.join('\n') },
-        { name: `media_${randomCode}.txt`, content: mediaFileContent.join('\n') },
-      ];
-
-      files.forEach(file => {
-        const blob = new Blob([file.content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = file.name;
-        link.textContent = `Tải ${file.name}`;
-        link.className = 'download-btn';
-        downloadContainer.appendChild(link);
-      });
-
-      // Thêm container chứa các nút vào div#response
-      document.getElementById('response').appendChild(downloadContainer);
     });
   </script>
 </body>
