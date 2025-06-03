@@ -28,9 +28,29 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 15px;
+      box-sizing: border-box; /* Đảm bảo padding không làm lệch kích thước */
     }
     input[type="number"] {
-      width: 100px;
+      width: 100px; /* Kích thước cố định cho input số */
+    }
+    .index-row {
+      display: flex;
+      flex-direction: row;
+      gap: 10px; /* Khoảng cách giữa hai ô */
+      align-items: center; /* Căn giữa theo chiều dọc */
+    }
+    .index-row > div {
+      flex: 1; /* Hai ô chiếm không gian đều nhau */
+      display: flex;
+      flex-direction: column;
+      min-width: 120px; /* Đảm bảo kích thước tối thiểu */
+    }
+    .index-row label {
+      margin-bottom: 0; /* Loại bỏ margin dưới để căn chỉnh */
+    }
+    .index-row input {
+      width: 100%; /* Input chiếm toàn bộ chiều rộng của ô */
+      max-width: 100px; /* Giới hạn chiều rộng tối đa */
     }
     button {
       padding: 10px;
@@ -57,15 +77,33 @@
     }
     #response {
       margin-top: 20px;
+      position: relative; /* Tạo ngữ cảnh định vị nếu cần */
     }
-    pre.result-box {
-      max-height: 200px;
+    .result-box {
+      position: relative; /* Tạo ngữ cảnh định vị cho copy-container */
+      max-height: 250px;
       overflow-y: auto;
       background: #f8f8f8;
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 4px;
       white-space: pre-wrap;
+    }
+    .copy-container {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      z-index: 10; /* Đảm bảo biểu tượng nằm trên nội dung */
+    }
+    .copy-icon {
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 5px;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+    }
+    .copy-icon:hover {
+      background-color: rgba(0, 0, 0, 0.2);
     }
     footer {
       text-align: center;
@@ -86,10 +124,16 @@
       <input type="text" id="username" name="username" placeholder="Ví dụ: tongtrankien" required>
       <label for="domain">Tên miền:</label>
       <input type="text" id="domain" name="domain" placeholder="Ví dụ: yopmail.com" required>
-      <label for="startIndex">Chỉ số bắt đầu:</label>
-      <input type="number" id="startIndex" name="startIndex" min="0" placeholder="Ví dụ: 1" required>
-      <label for="endIndex">Chỉ số kết thúc:</label>
-      <input type="number" id="endIndex" name="endIndex" min="0" placeholder="Ví dụ: 100" required>
+      <div class="index-row">
+        <div>
+          <label for="startIndex">Chỉ số bắt đầu:</label>
+          <input type="number" id="startIndex" name="startIndex" min="0" placeholder="Ví dụ: 1" required>
+        </div>
+        <div>
+          <label for="endIndex">Chỉ số kết thúc:</label>
+          <input type="number" id="endIndex" name="endIndex" min="0" placeholder="Ví dụ: 100" required>
+        </div>
+      </div>
       <button type="submit">Tạo</button>
     </form>
     <div id="response"></div>
@@ -131,6 +175,31 @@
       URL.revokeObjectURL(url);
     }
 
+    // Hàm sao chép nội dung
+    function copyResults() {
+      // Lấy nội dung văn bản từ node đầu tiên (text node) của <pre>
+      const resultBox = document.querySelector('.result-box');
+      const textNode = Array.from(resultBox.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+      const resultText = textNode ? textNode.textContent.trim() : '';
+      
+      navigator.clipboard.writeText(resultText).then(() => {
+        const feedback = document.createElement('span');
+        feedback.textContent = 'Đã sao chép!';
+        feedback.style.color = 'green';
+        feedback.style.marginLeft = '10px';
+        document.querySelector('.copy-container').appendChild(feedback);
+        setTimeout(() => feedback.remove(), 2000);
+      }).catch(err => {
+        console.error('Lỗi khi sao chép: ', err);
+        const feedback = document.createElement('span');
+        feedback.textContent = 'Lỗi khi sao chép!';
+        feedback.style.color = 'red';
+        feedback.style.marginLeft = '10px';
+        document.querySelector('.copy-container').appendChild(feedback);
+        setTimeout(() => feedback.remove(), 2000);
+      });
+    }
+
     // Xử lý sự kiện gửi form
     document.getElementById('emailForm').addEventListener('submit', function(event) {
       event.preventDefault();
@@ -161,13 +230,13 @@
         const emails = generateEmailList(username, startIndex, endIndex, domain);
         const randomCode = generateRandomCode();
 
-        // Hiển thị kết quả
+        // Hiển thị kết quả với nút sao chép
         document.getElementById('response').innerHTML = `
           <h2>Kết quả xử lý</h2>
           <p>Mã code: <strong>${randomCode}</strong></p>
           <button class="download-btn" onclick="triggerDownload([${emails.map(e => `'${e}'`)}], '${randomCode}')">Tải ${randomCode}.txt</button>
           <h3>Danh sách email:</h3>
-          <pre class="result-box">${emails.join('\n')}</pre>
+          <pre class="result-box">${emails.join('\n')}<div class="copy-container"><span class="copy-icon" onclick="copyResults()">📋</span></div></pre>
         `;
       } else {
         document.getElementById('response').innerHTML = 
