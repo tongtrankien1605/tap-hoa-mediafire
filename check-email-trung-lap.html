@@ -32,7 +32,7 @@
       margin-bottom: 3px;
     }
     .email-count {
-      color: #007bff; /* Màu xanh dương nổi bật */
+      color: #007bff;
       font-weight: bold;
     }
     textarea {
@@ -52,6 +52,9 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 16px;
+      margin: 0 auto; /* Căn giữa nút */
+      display: block; /* Đảm bảo margin auto hoạt động */
+      width: fit-content; /* Nút chỉ rộng vừa đủ nội dung */
     }
     button:hover {
       background-color: #0056b3;
@@ -62,6 +65,17 @@
     .stats {
       margin-bottom: 5px;
       font-weight: bold;
+    }
+    .highlight {
+      color: #ff0000; /* Màu đỏ nổi bật */
+      position: relative;
+      padding-left: 20px; /* Để có không gian cho mũi tên */
+    }
+    .highlight::before {
+      content: '➜'; /* Biểu tượng mũi tên Unicode */
+      position: absolute;
+      left: 0;
+      color: #ff0000; /* Cùng màu với văn bản */
     }
     .error {
       color: red;
@@ -203,7 +217,7 @@
       const outputDiv = document.getElementById("response");
       outputDiv.innerHTML = `
         <div class="stats">
-          <p>  => Số lượng email trùng giữa 2 danh sách là: ${countDuplicates}</p>
+          <p class="highlight">Số lượng email trùng giữa 2 danh sách là: ${countDuplicates}</p>
         </div>
       `;
       if (countDuplicates === 0) {
