@@ -16,12 +16,24 @@
     form {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 10px;
       margin-bottom: 10px;
+    }
+    .email-lists {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+    }
+    .email-lists div {
+      flex: 1;
     }
     label {
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
+    }
+    .email-count {
+      color: #007bff; /* Màu xanh dương nổi bật */
+      font-weight: bold;
     }
     textarea {
       padding: 6px;
@@ -30,7 +42,7 @@
       font-size: 16px;
       resize: vertical;
       width: 100%;
-      min-height: 100px;
+      min-height: 80px;
     }
     button {
       padding: 10px;
@@ -45,38 +57,69 @@
       background-color: #0056b3;
     }
     #response {
-      margin-top: 20px;
-    }
-    #response p {
-      background: #f8f8f8;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      white-space: pre-wrap;
+      margin-top: 10px;
     }
     .stats {
-      margin-bottom: 10px;
+      margin-bottom: 5px;
       font-weight: bold;
     }
     .error {
       color: red;
       font-weight: bold;
     }
+    .result-box {
+      position: relative;
+      max-height: 150px;
+      overflow-y: auto;
+      background: #f8f8f8;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      margin-top: 5px;
+    }
+    .copy-container {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      z-index: 10;
+    }
+    .copy-icon {
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 5px;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+    }
+    .copy-icon:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    footer {
+      text-align: center;
+      margin-top: 10px;
+      color: #666;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Kiểm Tra Email Trùng Nhau</h1>
-    <p>Nhập 2 danh sách email để kiểm tra xem có email nào trùng nhau không ?</p>
+    <p>Nhập 2 danh sách email để kiểm tra xem có email nào trùng nhau không?</p>
     <a href="index.html" class="download-btn back-btn"><span class="arrow">←</span> Quay lại Trang Chủ</a>
   </header>
 
   <main>
     <form id="emailForm">
-      <label for="list1">Danh sách email 1:</label>
-      <textarea name="list1" id="list1" rows="6" placeholder="Nhập mỗi email trên một dòng" required></textarea>
-      <label for="list2">Danh sách email 2:</label>
-      <textarea name="list2" id="list2" rows="6" placeholder="Nhập mỗi email trên một dòng" required></textarea>
+      <div class="email-lists">
+        <div>
+          <label for="list1">Danh sách 1: <span class="email-count" id="count1">có 0 email</span></label>
+          <textarea name="list1" id="list1" rows="8" placeholder="Nhập mỗi email trên một dòng" required></textarea>
+        </div>
+        <div>
+          <label for="list2">Danh sách 2: <span class="email-count" id="count2">có 0 email</span></label>
+          <textarea name="list2" id="list2" rows="8" placeholder="Nhập mỗi email trên một dòng" required></textarea>
+        </div>
+      </div>
       <button type="submit">Kiểm tra</button>
     </form>
     <div id="response"></div>
@@ -87,6 +130,49 @@
   </footer>
 
   <script>
+    // Hàm đếm và cập nhật số lượng email
+    function updateEmailCount() {
+      const list1 = document.getElementById('list1').value;
+      const list2 = document.getElementById('list2').value;
+
+      const emails1 = list1.split('\n').map(email => email.trim()).filter(email => email);
+      const emails2 = list2.split('\n').map(email => email.trim()).filter(email => email);
+
+      document.getElementById('count1').textContent = `có ${emails1.length} email`;
+      document.getElementById('count2').textContent = `có ${emails2.length} email`;
+    }
+
+    // Hàm sao chép nội dung
+    function copyResults() {
+      const resultBox = document.querySelector('.result-box');
+      const textNode = Array.from(resultBox.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+      const resultText = textNode ? textNode.textContent.trim() : '';
+      
+      navigator.clipboard.writeText(resultText).then(() => {
+        const feedback = document.createElement('span');
+        feedback.textContent = 'Đã sao chép!';
+        feedback.style.color = 'green';
+        feedback.style.marginLeft = '10px';
+        document.querySelector('.copy-container').appendChild(feedback);
+        setTimeout(() => feedback.remove(), 2000);
+      }).catch(err => {
+        console.error('Lỗi khi sao chép: ', err);
+        const feedback = document.createElement('span');
+        feedback.textContent = 'Lỗi khi sao chép!';
+        feedback.style.color = 'red';
+        feedback.style.marginLeft = '10px';
+        document.querySelector('.copy-container').appendChild(feedback);
+        setTimeout(() => feedback.remove(), 2000);
+      });
+    }
+
+    // Cập nhật số lượng email khi người dùng nhập
+    document.getElementById('list1').addEventListener('input', updateEmailCount);
+    document.getElementById('list2').addEventListener('input', updateEmailCount);
+
+    // Gọi hàm để cập nhật số lượng ban đầu
+    updateEmailCount();
+
     // Xử lý sự kiện gửi form
     document.getElementById("emailForm").addEventListener("submit", function (event) {
       event.preventDefault();
@@ -117,15 +203,15 @@
       const outputDiv = document.getElementById("response");
       outputDiv.innerHTML = `
         <div class="stats">
-          <p>Số lượng email trong danh sách 1: ${countList1}</p>
-          <p>Số lượng email trong danh sách 2: ${countList2}</p>
-          <p>Số lượng email trùng lặp: ${countDuplicates}</p>
+          <p>  => Số lượng email trùng giữa 2 danh sách là: ${countDuplicates}</p>
         </div>
       `;
       if (countDuplicates === 0) {
         outputDiv.innerHTML += "<p>Không có email trùng nhau.</p>";
       } else {
-        outputDiv.innerHTML += `<p>${duplicates.join("<br>")}</p>`;
+        outputDiv.innerHTML += `
+          <pre class="result-box">${duplicates.join('\n')}<div class="copy-container"><span class="copy-icon" onclick="copyResults()">📋</span></div></pre>
+        `;
       }
     });
   </script>
