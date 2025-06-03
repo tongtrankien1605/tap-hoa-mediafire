@@ -18,6 +18,7 @@
       flex-direction: column;
       gap: 10px;
       margin-bottom: 10px;
+      text-align: center;
     }
     .email-lists {
       display: flex;
@@ -52,9 +53,7 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 16px;
-      margin: 0 auto; /* Căn giữa nút */
-      display: block; /* Đảm bảo margin auto hoạt động */
-      width: fit-content; /* Nút chỉ rộng vừa đủ nội dung */
+      width: fit-content;
     }
     button:hover {
       background-color: #0056b3;
@@ -67,15 +66,15 @@
       font-weight: bold;
     }
     .highlight {
-      color: #ff0000; /* Màu đỏ nổi bật */
+      color: #ff0000;
       position: relative;
-      padding-left: 20px; /* Để có không gian cho mũi tên */
+      padding-left: 20px;
     }
     .highlight::before {
-      content: '➜'; /* Biểu tượng mũi tên Unicode */
+      content: '➜';
       position: absolute;
       left: 0;
-      color: #ff0000; /* Cùng màu với văn bản */
+      color: #ff0000;
     }
     .error {
       color: red;
@@ -144,13 +143,30 @@
   </footer>
 
   <script>
-    // Hàm đếm và cập nhật số lượng email
+    // Hàm kiểm tra định dạng email hợp lệ
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // Hàm đếm và cập nhật số lượng email hợp lệ, loại bỏ email lặp lại
     function updateEmailCount() {
       const list1 = document.getElementById('list1').value;
       const list2 = document.getElementById('list2').value;
 
-      const emails1 = list1.split('\n').map(email => email.trim()).filter(email => email);
-      const emails2 = list2.split('\n').map(email => email.trim()).filter(email => email);
+      // Lấy danh sách email hợp lệ và loại bỏ email lặp lại
+      const emails1 = [...new Set(
+        list1
+          .split('\n')
+          .map(email => email.trim())
+          .filter(email => email && isValidEmail(email))
+      )];
+      const emails2 = [...new Set(
+        list2
+          .split('\n')
+          .map(email => email.trim())
+          .filter(email => email && isValidEmail(email))
+      )];
 
       document.getElementById('count1').textContent = `có ${emails1.length} email`;
       document.getElementById('count2').textContent = `có ${emails2.length} email`;
@@ -195,15 +211,19 @@
       const list1 = document.getElementById("list1").value;
       const list2 = document.getElementById("list2").value;
 
-      // Chuyển chuỗi email thành mảng và loại bỏ khoảng trắng dư thừa
-      const emails1 = list1
-        .split("\n")
-        .map((email) => email.trim())
-        .filter((email) => email);
-      const emails2 = list2
-        .split("\n")
-        .map((email) => email.trim())
-        .filter((email) => email);
+      // Chuyển chuỗi email thành mảng, loại bỏ khoảng trắng dư thừa, chỉ giữ email hợp lệ và loại bỏ lặp lại
+      const emails1 = [...new Set(
+        list1
+          .split("\n")
+          .map((email) => email.trim())
+          .filter((email) => email && isValidEmail(email))
+      )];
+      const emails2 = [...new Set(
+        list2
+          .split("\n")
+          .map((email) => email.trim())
+          .filter((email) => email && isValidEmail(email))
+      )];
 
       // Tìm các email trùng nhau
       const duplicates = emails1.filter((email) => emails2.includes(email));
