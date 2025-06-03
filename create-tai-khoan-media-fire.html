@@ -80,7 +80,8 @@
 
       const quantity = parseInt(document.getElementById('quantity').value);
       if (quantity <= 0 || quantity > 1000) {
-        document.getElementById('response').innerText = 'Số lượng chỉ được phép trong khoảng 1 đến 1000.';
+        document.getElementById('response').innerHTML = 
+          '<p style="color: red; font-weight: bold;">Số lượng chỉ được phép trong khoảng 1 đến 1000.</p>';
         return;
       }
 

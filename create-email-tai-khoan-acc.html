@@ -59,7 +59,7 @@
       margin-top: 20px;
     }
     pre.result-box {
-      max-height: 200px; /* Giảm từ 300px xuống 200px */
+      max-height: 200px;
       overflow-y: auto;
       background: #f8f8f8;
       padding: 10px;
@@ -135,14 +135,29 @@
     document.getElementById('emailForm').addEventListener('submit', function(event) {
       event.preventDefault();
 
-      // Lấy giá trị từ form
       const username = document.getElementById('username').value.trim();
       const domain = document.getElementById('domain').value.trim();
       const startIndex = parseInt(document.getElementById('startIndex').value);
       const endIndex = parseInt(document.getElementById('endIndex').value);
 
-      // Kiểm tra dữ liệu đầu vào
-      if (username && domain && startIndex >= 0 && endIndex >= startIndex) {
+      if (username && domain && startIndex >= 0) {
+        // Kiểm tra startIndex < endIndex
+        if (startIndex >= endIndex) {
+          document.getElementById('response').innerHTML = 
+            '<p style="color: red; font-weight: bold;">Chỉ số bắt đầu phải nhỏ hơn chỉ số kết thúc.</p>';
+          return;
+        }
+
+        // Tính số lượng email
+        const emailCount = endIndex - startIndex + 1;
+
+        // Kiểm tra số lượng email
+        if (emailCount > 1000) {
+          document.getElementById('response').innerHTML = 
+            '<p style="color: red; font-weight: bold;">Số lượng email lớn hơn 1000. Vui lòng sửa lại chỉ số.</p>';
+          return;
+        }
+
         const emails = generateEmailList(username, startIndex, endIndex, domain);
         const randomCode = generateRandomCode();
 
