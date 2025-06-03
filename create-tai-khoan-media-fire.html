@@ -5,13 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tạo Tài Khoản MediaFire Ngẫu Nhiên</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .back-btn .arrow {
+      margin-right: 8px;
+    }
+    pre.result-box {
+      max-height: 175px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+    .download-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .download-buttons a {
+      flex: 1 1 calc(16.67% - 10px);
+      box-sizing: border-box;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>Tạo Tài Khoản MediaFire Ngẫu Nhiên</h1>
     <p>Nhập số lượng để tạo danh sách tài khoản MediaFire gồm email, mật khẩu, firstname, lastname</p>
-    <!-- <a href="index.html">Quay lại Trang Chủ</a> -->
-     <a href="index.html" class="download-btn back-btn"><span class="arrow">←</span> Quay lại Trang Chủ</a>
+    <a href="index.html" class="download-btn back-btn"><span class="arrow">←</span> Quay lại Trang Chủ</a>
   </header>
   <main>
     <form id="randomDataForm">
@@ -113,12 +136,16 @@
       document.getElementById('response').innerHTML = `
         <h2>Kết quả xử lý</h2>
         <p>Mã code: <strong>${randomCode}</strong></p>
-        <a class="download-btn" href="${zipUrl}" download="${randomCode}.zip">Tải ${randomCode}.Zip</a>
+        <a class="download-btn" href="${zipUrl}" download="${randomCode}.zip">Tải ${randomCode}.zip</a>
         <h3>Danh sách kết quả:</h3>
-        <pre>${results.join('\n')}</pre>
+        <pre class="result-box">${results.join('\n')}</pre>
       `;
 
-      // Tạo liên kết tải từng tệp với tên mới
+      // Tạo container cho các nút tải xuống
+      const downloadContainer = document.createElement('div');
+      downloadContainer.className = 'download-buttons';
+
+      // Tạo liên kết tải từng tệp và thêm vào container
       const files = [
         { name: `email_${randomCode}.txt`, content: emailFileContent.join('\n') },
         { name: `firstname_${randomCode}.txt`, content: firstNameFileContent.join('\n') },
@@ -136,9 +163,11 @@
         link.download = file.name;
         link.textContent = `Tải ${file.name}`;
         link.className = 'download-btn';
-        document.getElementById('response').appendChild(link);
-        document.getElementById('response').appendChild(document.createElement('br'));
+        downloadContainer.appendChild(link);
       });
+
+      // Thêm container chứa các nút vào div#response
+      document.getElementById('response').appendChild(downloadContainer);
     });
   </script>
 </body>
