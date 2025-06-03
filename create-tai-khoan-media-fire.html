@@ -9,7 +9,7 @@
 <body>
   <header>
     <h1>Tạo Tài Khoản MediaFire Ngẫu Nhiên</h1>
-    <p>Nhập số lượng để tạo danh sách tài khoản mediafire gồm email, mật khẩu, firstname, lastname</p>
+    <p>Nhập số lượng để tạo danh sách tài khoản MediaFire gồm email, mật khẩu, firstname, lastname</p>
     <a href="index.html">Quay lại Trang Chủ</a>
   </header>
   <main>
@@ -27,16 +27,18 @@
   <!-- Thêm thư viện JSZip -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
-    // Logic tạo dữ liệu ngẫu nhiên
+    // Danh sách tên và họ để tạo ngẫu nhiên
     const firstNames = ["An", "Bao", "Cuong", "Dung", "Hanh", "Hung", "Linh", "Minh", "Ngoc", "Phuc", "Quan", "Son", "Thanh", "Thao", "Tu", "Vy"];
     const lastNames = ["Nguyen", "Tran", "Le", "Pham", "Hoang", "Phan", "Vu", "Vo", "Dang", "Bui", "Do", "Ho", "Ngo", "Duong", "Ly"];
 
+    // Hàm tạo tên ngẫu nhiên
     function generateRandomName() {
       const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
       const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
       return [firstName, lastName];
     }
 
+    // Hàm tạo email ngẫu nhiên
     function generateRandomEmail() {
       const letters = 'abcdefghijklmnopqrstuvwxyz';
       const numbers = '0123456789';
@@ -45,18 +47,21 @@
       return `${randomLetters}${randomNumbers}@yopmail.com`;
     }
 
+    // Hàm tạo mật khẩu ngẫu nhiên
     function generateRandomPassword() {
       const numbers = '0123456789';
       const randomNumbers = Array.from({ length: 6 }, () => numbers[Math.floor(Math.random() * numbers.length)]).join('');
       return `KienTT${randomNumbers}@`;
     }
 
+    // Hàm tạo mã code ngẫu nhiên
     function generateRandomCode() {
       const array = new Uint8Array(3);
       crypto.getRandomValues(array);
       return Array.from(array, byte => ('0' + byte.toString(16)).slice(-2)).join('');
     }
 
+    // Xử lý sự kiện khi gửi biểu mẫu
     document.getElementById('randomDataForm').addEventListener('submit', async function(event) {
       event.preventDefault();
 
@@ -74,6 +79,7 @@
       const passwordFileContent = [];
       const mediaFileContent = [];
 
+      // Tạo dữ liệu ngẫu nhiên theo số lượng
       for (let i = 0; i < quantity; i++) {
         const [firstName, lastName] = generateRandomName();
         const email = generateRandomEmail();
@@ -90,32 +96,35 @@
         mediaFileContent.push(mediaLine);
       }
 
+      // Tạo tệp ZIP với tên mới
       const zip = new JSZip();
-      zip.file('emails.txt', emailFileContent.join('\n'));
-      zip.file('first_names.txt', firstNameFileContent.join('\n'));
-      zip.file('last_names.txt', lastNameFileContent.join('\n'));
-      zip.file('passwords.txt', passwordFileContent.join('\n'));
-      zip.file('all_results.txt', results.join('\n'));
-      zip.file('media.txt', mediaFileContent.join('\n'));
+      zip.file(`email_${randomCode}.txt`, emailFileContent.join('\n'));
+      zip.file(`firstname_${randomCode}.txt`, firstNameFileContent.join('\n'));
+      zip.file(`lastname_${randomCode}.txt`, lastNameFileContent.join('\n'));
+      zip.file(`password_${randomCode}.txt`, passwordFileContent.join('\n'));
+      zip.file(`allresults_${randomCode}.txt`, results.join('\n'));
+      zip.file(`media_${randomCode}.txt`, mediaFileContent.join('\n'));
 
       const zipBlob = await zip.generateAsync({ type: 'blob' });
       const zipUrl = URL.createObjectURL(zipBlob);
 
+      // Hiển thị kết quả và liên kết tải
       document.getElementById('response').innerHTML = `
         <h2>Kết quả xử lý</h2>
         <p>Mã code: <strong>${randomCode}</strong></p>
-        <button class="download-btn" onclick="window.location.href='${zipUrl}'" download="${randomCode}_data.zip">Tải tệp ZIP</button>
+        <a class="download-btn" href="${zipUrl}" download="${randomCode}.zip">Tải ${randomCode}.Zip</a>
         <h3>Danh sách kết quả:</h3>
         <pre>${results.join('\n')}</pre>
       `;
 
+      // Tạo liên kết tải từng tệp với tên mới
       const files = [
-        { name: 'emails.txt', content: emailFileContent.join('\n') },
-        { name: 'first_names.txt', content: firstNameFileContent.join('\n') },
-        { name: 'last_names.txt', content: lastNameFileContent.join('\n') },
-        { name: 'passwords.txt', content: passwordFileContent.join('\n') },
-        { name: 'all_results.txt', content: results.join('\n') },
-        { name: 'media.txt', content: mediaFileContent.join('\n') },
+        { name: `email_${randomCode}.txt`, content: emailFileContent.join('\n') },
+        { name: `firstname_${randomCode}.txt`, content: firstNameFileContent.join('\n') },
+        { name: `lastname_${randomCode}.txt`, content: lastNameFileContent.join('\n') },
+        { name: `password_${randomCode}.txt`, content: passwordFileContent.join('\n') },
+        { name: `allresults_${randomCode}.txt`, content: results.join('\n') },
+        { name: `media_${randomCode}.txt`, content: mediaFileContent.join('\n') },
       ];
 
       files.forEach(file => {
