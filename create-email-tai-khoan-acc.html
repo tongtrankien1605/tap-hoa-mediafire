@@ -4,18 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Email Tài Khoản Acc</title>
-    <link rel="stylesheet" href="styles.css">
-
+  <link rel="stylesheet" href="styles.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 0 15px;
-    }
+
+    
     header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+
     }
     h1 {
       color: #333;
@@ -65,7 +61,9 @@
     #response {
       margin-top: 20px;
     }
-    pre {
+    pre.result-box {
+      max-height: 300px;
+      overflow-y: hidden;
       background: #f8f8f8;
       padding: 10px;
       border: 1px solid #ddd;
@@ -74,7 +72,7 @@
     }
     footer {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 15px;
       color: #666;
     }
   </style>
@@ -83,8 +81,7 @@
   <header>
     <h1>Create Email Tài Khoản Acc</h1>
     <p>Nhập thông tin để tạo danh sách email và tải tệp văn bản.</p>
-    <!-- <a href="index.html">Quay lại Trang Chủ</a> -->
-     <a href="index.html" class="download-btn back-btn"><span class="arrow">←</span> Quay lại Trang Chủ</a>
+    <a href="index.html" class="download-btn back-btn"><span class="arrow">←</span> Quay lại Trang Chủ</a>
   </header>
   <main>
     <form id="emailForm">
@@ -158,7 +155,7 @@
           <p>Mã code: <strong>${randomCode}</strong></p>
           <button class="download-btn" onclick="triggerDownload([${emails.map(e => `'${e}'`)}], '${randomCode}')">Tải ${randomCode}.txt</button>
           <h3>Danh sách email:</h3>
-          <pre>${emails.join('\n')}</pre>
+          <pre class="result-box">${emails.join('\n')}</pre>
         `;
       } else {
         document.getElementById('response').innerHTML = 
