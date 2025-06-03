@@ -1,137 +1,133 @@
 <!DOCTYPE html>
 <html lang="vi">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Check Email Trùng Nhau</title>
-        <link rel="stylesheet" href="styles.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Check Email Trùng Nhau</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    textarea {
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+      resize: vertical;
+      width: 100%;
+      min-height: 100px;
+    }
+    button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #response {
+      margin-top: 20px;
+    }
+    #response p {
+      background: #f8f8f8;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+    .stats {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Kiểm Tra Email Trùng Nhau</h1>
+    <p>Nhập 2 danh sách email để kiểm tra xem có email nào trùng nhau không ?</p>
+    <a href="index.html" class="download-btn back-btn"><span class="arrow">←</span> Quay lại Trang Chủ</a>
+  </header>
 
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                max-width: 600px;
-                margin: 20px auto;
-                padding: 0 15px;
-            }
-            h1 {
-                text-align: center;
-                color: #333;
-            }
-            form {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-            }
-            label {
-                font-weight: bold;
-                margin-bottom: 5px;
-            }
-            textarea {
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                font-size: 16px;
-                resize: vertical;
-                width: 100%;
-                min-height: 100px;
-            }
-            button {
-                padding: 10px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 16px;
-            }
-            button:hover {
-                background-color: #0056b3;
-            }
-            #response {
-                margin-top: 20px;
-            }
-            #response p {
-                background: #f8f8f8;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                white-space: pre-wrap;
-            }
-            .stats {
-                margin-bottom: 10px;
-                font-weight: bold;
-            }
-            .error {
-                color: red;
-                font-weight: bold;
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <h1>Kiểm Tra Email Trùng Nhau</h1>
-            <p>Nhập 2 danh sách email để kiểm tra xem có email nào trùng nhau không ?</p>
-            <!-- <a href="index.html">Quay lại Trang Chủ</a> -->
-            <a href="index.html" class="download-btn back-btn"><span class="arrow">←</span> Quay lại Trang Chủ</a>
-        </header>
+  <main>
+    <form id="emailForm">
+      <label for="list1">Danh sách email 1:</label>
+      <textarea name="list1" id="list1" rows="6" placeholder="Nhập mỗi email trên một dòng" required></textarea>
+      <label for="list2">Danh sách email 2:</label>
+      <textarea name="list2" id="list2" rows="6" placeholder="Nhập mỗi email trên một dòng" required></textarea>
+      <button type="submit">Kiểm tra</button>
+    </form>
+    <div id="response"></div>
+  </main>
 
-        <main>
-            <form id="emailForm">
-                <label for="list1">Danh sách email 1:</label>
-                <textarea name="list1" id="list1" rows="10" placeholder="Nhập mỗi email trên một dòng" required></textarea>
-                <label for="list2">Danh sách email 2:</label>
-                <textarea name="list2" id="list2" rows="10" placeholder="Nhập mỗi email trên một dòng" required></textarea>
-                <button type="submit">Kiểm tra</button>
-            </form>
-            <div id="response"></div>
-        </main>
+  <footer>
+    <p>© 2025 Tong Tran Kien. Được triển khai trên GitHub Pages.</p>
+  </footer>
 
-        <footer>
-            <p>© 2025 Tong Tran Kien. Được triển khai trên GitHub Pages.</p>
-        </footer>
+  <script>
+    // Xử lý sự kiện gửi form
+    document.getElementById("emailForm").addEventListener("submit", function (event) {
+      event.preventDefault();
 
-        <script>
-            // Xử lý sự kiện gửi form
-            document.getElementById("emailForm").addEventListener("submit", function (event) {
-                event.preventDefault();
+      // Lấy dữ liệu từ textarea
+      const list1 = document.getElementById("list1").value;
+      const list2 = document.getElementById("list2").value;
 
-                // Lấy dữ liệu từ textarea
-                const list1 = document.getElementById("list1").value;
-                const list2 = document.getElementById("list2").value;
+      // Chuyển chuỗi email thành mảng và loại bỏ khoảng trắng dư thừa
+      const emails1 = list1
+        .split("\n")
+        .map((email) => email.trim())
+        .filter((email) => email);
+      const emails2 = list2
+        .split("\n")
+        .map((email) => email.trim())
+        .filter((email) => email);
 
-                // Chuyển chuỗi email thành mảng và loại bỏ khoảng trắng dư thừa
-                const emails1 = list1
-                    .split("\n")
-                    .map((email) => email.trim())
-                    .filter((email) => email);
-                const emails2 = list2
-                    .split("\n")
-                    .map((email) => email.trim())
-                    .filter((email) => email);
+      // Tìm các email trùng nhau
+      const duplicates = emails1.filter((email) => emails2.includes(email));
 
-                // Tìm các email trùng nhau
-                const duplicates = emails1.filter((email) => emails2.includes(email));
+      // Đếm số lượng
+      const countList1 = emails1.length;
+      const countList2 = emails2.length;
+      const countDuplicates = duplicates.length;
 
-                // Đếm số lượng
-                const countList1 = emails1.length;
-                const countList2 = emails2.length;
-                const countDuplicates = duplicates.length;
-
-                // Xuất kết quả
-                const outputDiv = document.getElementById("response");
-                outputDiv.innerHTML = `
+      // Xuất kết quả
+      const outputDiv = document.getElementById("response");
+      outputDiv.innerHTML = `
         <div class="stats">
           <p>Số lượng email trong danh sách 1: ${countList1}</p>
           <p>Số lượng email trong danh sách 2: ${countList2}</p>
           <p>Số lượng email trùng lặp: ${countDuplicates}</p>
         </div>
       `;
-                if (countDuplicates === 0) {
-                    outputDiv.innerHTML += "<p>Không có email trùng nhau.</p>";
-                } else {
-                    outputDiv.innerHTML += `<p>${duplicates.join("<br>")}</p>`;
-                }
-            });
-        </script>
-    </body>
+      if (countDuplicates === 0) {
+        outputDiv.innerHTML += "<p>Không có email trùng nhau.</p>";
+      } else {
+        outputDiv.innerHTML += `<p>${duplicates.join("<br>")}</p>`;
+      }
+    });
+  </script>
+</body>
 </html>
