@@ -14,7 +14,7 @@
       margin-top: 20px;
     }
     .result-box {
-      position: relative;
+      position: relative; /* Tạo ngữ cảnh định vị cho copy-container */
       max-height: 185px;
       overflow-y: auto;
       border: 1px solid #ccc;
@@ -26,7 +26,7 @@
       position: absolute;
       top: 5px;
       right: 5px;
-      z-index: 10;
+      z-index: 10; /* Đảm bảo biểu tượng nằm trên nội dung */
     }
     .copy-icon {
       cursor: pointer;
@@ -115,7 +115,11 @@
     }
 
     function copyResults() {
-      const resultText = document.querySelector('.result-box').innerText.trim();
+      // Lấy nội dung văn bản từ node đầu tiên (text node) của <pre>
+      const resultBox = document.querySelector('.result-box');
+      const textNode = Array.from(resultBox.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+      const resultText = textNode ? textNode.textContent.trim() : '';
+      
       navigator.clipboard.writeText(resultText).then(() => {
         const feedback = document.createElement('span');
         feedback.textContent = 'Đã sao chép!';
